@@ -1,4 +1,4 @@
-package com.example.springreddit.domain;
+package com.example.springreddit.model;
 /*
 	An Enum for storing if a vote is an Upvote (positive vote) or a Downvote.
 

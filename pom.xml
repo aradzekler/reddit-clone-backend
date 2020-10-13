@@ -14,9 +14,7 @@
 	<name>spring-reddit</name>
 	<description>Demo project for Spring Boot</description>
 
-	<properties>
-		<java.version>11</java.version>
-	</properties>
+
 
 	<dependencies>
 		<dependency>
@@ -81,6 +79,7 @@
 			<scope>runtime</scope>
 			<version>0.10.5</version>
 		</dependency>
+
 		<!-- For Displaying time as Relative Time Ago ("Posted 1 Day ago"),
          as this is a Kotlin library, we also need Kotlin runtime libraries-->
 		<dependency>
@@ -88,11 +87,13 @@
 			<artifactId>timeago</artifactId>
 			<version>4.0.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 			<version>${kotlin.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-test</artifactId>
@@ -104,6 +105,14 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>2.0.0.Final</version>
+		</dependency>
+
+		<!-- If we want to send HTML emails from our application,
+		Thymeleaf provides us the template engine, which we can use
+		 to create HTML templates and use those templates to send the emails.-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -127,6 +136,13 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,9 +1,9 @@
-package com.example.springreddit.repositories;
+package com.example.springreddit.repository;
 
 
-import com.example.springreddit.domain.Comment;
-import com.example.springreddit.domain.Post;
-import com.example.springreddit.domain.User;
+import com.example.springreddit.model.Comment;
+import com.example.springreddit.model.Post;
+import com.example.springreddit.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

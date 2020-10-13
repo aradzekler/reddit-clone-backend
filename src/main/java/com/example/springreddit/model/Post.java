@@ -1,4 +1,4 @@
-package com.example.springreddit.domain;
+package com.example.springreddit.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +19,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
  */
 @Data
 @Entity
-@Builder // @Builder lets you automatically produce the code required to have your class be instantiable with code such as:
-		//Person.builder().name("Adam Savage").city("San Francisco").job("Mythbusters").job("Unchained Reaction").build();
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Post {

@@ -1,4 +1,4 @@
-package com.example.springreddit.domain;
+package com.example.springreddit.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

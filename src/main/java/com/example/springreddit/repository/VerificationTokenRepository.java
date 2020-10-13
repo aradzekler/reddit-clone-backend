@@ -1,6 +1,6 @@
-package com.example.springreddit.repositories;
+package com.example.springreddit.repository;
 
-import com.example.springreddit.domain.VerificationToken;
+import com.example.springreddit.model.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
