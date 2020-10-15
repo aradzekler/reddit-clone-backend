@@ -11,6 +11,7 @@ import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
+import static javax.persistence.GenerationType.IDENTITY;
 
 
 /*
@@ -21,11 +22,10 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
 public class Comment {
 	@Id
-	@GeneratedValue(strategy = SEQUENCE)
+	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 
 	@NotEmpty

@@ -15,7 +15,6 @@ import javax.persistence.Entity;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class NotificationEmail {
 	private String subject;
 	private String recipient;

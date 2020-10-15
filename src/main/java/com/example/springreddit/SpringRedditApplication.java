@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@EnableAsync
+@EnableAsync // enables Asynchronous calls, shortening out waiting time for stuff.
 //@Import(SwaggerConfiguration.class)
 public class SpringRedditApplication {
 

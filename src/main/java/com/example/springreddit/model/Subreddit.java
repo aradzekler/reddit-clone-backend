@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 /*
@@ -25,7 +26,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Builder
 public class Subreddit {
 	@Id
-	@GeneratedValue(strategy = SEQUENCE)
+	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 
 	@NotBlank(message = "Community name is required")
@@ -36,7 +37,6 @@ public class Subreddit {
 
 	@OneToMany(fetch = LAZY)
 	private List<Post> posts;
-
 	private Instant createdDate;
 
 	@ManyToOne(fetch = LAZY)

@@ -16,15 +16,14 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/signup")
-	public ResponseEntity signup(@RequestBody RegisterRequest registerRequest) {
+	public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest) {
 		authService.signup(registerRequest);
-		return new ResponseEntity(OK);
+		return new ResponseEntity<>("Account Signed Up Successfully", OK);
 	}
 
-	// returning a response for the verification request from our model to the view (user) using our auth service.
 	@GetMapping("accountVerification/{token}")
 	public ResponseEntity<String> verifyAccount(@PathVariable String token) {
 		authService.verifyAccount(token);
-		return new ResponseEntity<>("Account Activated Successully", OK);
+		return new ResponseEntity<>("Account Activated Successfully", OK);
 	}
 }

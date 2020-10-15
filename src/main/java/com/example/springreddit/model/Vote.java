@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 /*
@@ -24,9 +25,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Builder
 public class Vote {
 	@Id
-	@GeneratedValue(strategy = SEQUENCE)
+	@GeneratedValue(strategy = IDENTITY)
 	private Long voteId;
-
 	private VoteType voteType;
 
 	@NotNull
