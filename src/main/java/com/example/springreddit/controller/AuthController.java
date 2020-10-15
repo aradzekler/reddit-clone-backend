@@ -15,10 +15,11 @@ public class AuthController {
 
 	private final AuthService authService;
 
+	//TODO: the sign up should allow only unqiue registrations, get requests can only return a single value.
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest) {
 		authService.signup(registerRequest);
-		return new ResponseEntity<>("Account Signed Up Successfully", OK);
+		return new ResponseEntity<>("Account Registration Successfully", OK);
 	}
 
 	@GetMapping("accountVerification/{token}")
