@@ -1,6 +1,8 @@
 package com.example.springreddit.service;
 
 
+import com.example.springreddit.dto.AuthenticationResponse;
+import com.example.springreddit.dto.LoginRequest;
 import com.example.springreddit.model.NotificationEmail;
 import com.example.springreddit.dto.RegisterRequest;
 import com.example.springreddit.model.User;
@@ -8,11 +10,16 @@ import com.example.springreddit.model.VerificationToken;
 import com.example.springreddit.exception.SpringRedditException;
 import com.example.springreddit.repository.UserRepository;
 import com.example.springreddit.repository.VerificationTokenRepository;
+import com.example.springreddit.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.SharedSessionContract;
 import org.hibernate.Transaction;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +43,8 @@ public class AuthService {
 	// we will need our user repository to access users, and encode the user password
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AuthenticationManager authenticationManager;
+	private final JwtProvider jwtProvider;
 
 	/*
 	This will allow the user to log in after they verify their email.
@@ -64,6 +73,7 @@ public class AuthService {
 		user.setCreated(now());
 		user.setEnabled(false);
 		userRepository.save(user);
+		log.info("User Registered Successfully, Sending Authentication Email");
 		String token = generateVerificationToken(user);
 		String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
 				+ ACTIVATION_EMAIL + "/" + token);
@@ -88,8 +98,7 @@ public class AuthService {
 	// return SpringRedditException
 	public void verifyAccount(String token) {
 		Optional<VerificationToken> verificationTokenOptional = verificationTokenRepository.findByToken(token);
-		verificationTokenOptional.orElseThrow(() -> new SpringRedditException("Invalid Token"));
-		fetchUserAndEnable(verificationTokenOptional.get());
+		fetchUserAndEnable(verificationTokenOptional.orElseThrow(() -> new SpringRedditException("Invalid Token")));
 	}
 
 	// getting the user and enabling him in the system.
@@ -97,7 +106,18 @@ public class AuthService {
 	private void fetchUserAndEnable(VerificationToken verificationToken) {
 		String username = verificationToken.getUser().getUsername();
 		User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
-		user.setEnabled(true); // officialy activated the user.
-		userRepository.save(user); // saving to db
+		user.setEnabled(true);
+		userRepository.save(user);
+	}
+
+	// our login method, returns an AuthenticationResponse DTO and accepts a LoginRequest DTO
+	// this method authenticates the user and generates a JWT token, returns the DTO with the token
+	// and the username.
+	public AuthenticationResponse login(LoginRequest loginRequest) {
+		Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+				loginRequest.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authenticate);
+		String authenticationToken = jwtProvider.generateToken(authenticate);
+		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
 	}
 }
