@@ -1,5 +1,6 @@
 package com.example.springreddit.config;
 
+import com.example.springreddit.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /*
 This is the base class and interface for our SecurityConfig class,
@@ -26,13 +28,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	// where it fetches the user information from our MySQL Database: UserDetailsServiceImpl class.
 	private final UserDetailsService userDetailsService; // userDetailsService interface for checking user details.
 
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
 
-	@Override
+	@Override // these are our main settings for our SecurityConfig class
 	public void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable()
 				.authorizeRequests()
@@ -40,6 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll()
 				.anyRequest()
 				.authenticated();
+		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 	// configured AuthenticationManagerBuilder to use the UserDetailsService interface to check for user information.
