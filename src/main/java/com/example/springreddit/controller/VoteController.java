@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/*
+
+ */
 @RestController
 @RequestMapping("/api/votes/")
 @AllArgsConstructor
@@ -17,6 +20,8 @@ public class VoteController {
 
 	private final VoteService voteService;
 
+	// Our voting method receiving the Vote DTO and using the Vote service.
+	// and the POST call.
 	@PostMapping
 	public ResponseEntity<Void> vote(@RequestBody VoteDto voteDto) {
 		voteService.vote(voteDto);

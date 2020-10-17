@@ -3,6 +3,7 @@ package com.example.springreddit.security;
 import com.example.springreddit.exception.SpringRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -11,18 +12,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.util.Date;
 
 import static com.example.springreddit.util.Constants.JKS_FILE_PASSWORD;
 import static io.jsonwebtoken.Jwts.parser;
+import static java.util.Date.from;
 
 
 /* Our Jwt provider service, this one constructs our Jwt tokens and
-	retrieving private keys.
-
+	retrieving private keys. These authenticated and validated tokens
+	are used to transfer requests between the client and the server.
  */
 @Service
 public class JwtProvider {
+
 	private KeyStore keyStore;
+
+	@Value("${jwt.expiration.time}") // jwt.expiration.time == 900000 ms (15 minutes)
+	private Long jwtExpirationInMillis;
+
 
 	@PostConstruct
 	public void init() {
@@ -41,7 +50,18 @@ public class JwtProvider {
 		org.springframework.security.core.userdetails.User principal = (User) authentication.getPrincipal();
 		return Jwts.builder()
 				.setSubject(principal.getUsername())
+				.setIssuedAt(from(Instant.now()))
 				.signWith(getPrivateKey())
+				.setExpiration(from(Instant.now().plusMillis(jwtExpirationInMillis))) // setting our short lived expiration on JWT.
+				.compact();
+	}
+
+	public String generateTokenWithUserName(String username) {
+		return Jwts.builder()
+				.setSubject(username)
+				.setIssuedAt(from(Instant.now()))
+				.signWith(getPrivateKey())
+				.setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
 				.compact();
 	}
 
@@ -77,5 +97,8 @@ public class JwtProvider {
 		return claims.getSubject();
 	}
 
+	public Long getJwtExpirationInMillis() {
+		return jwtExpirationInMillis;
+	}
 
 }

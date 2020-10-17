@@ -3,6 +3,7 @@ package com.example.springreddit.service;
 
 import com.example.springreddit.dto.AuthenticationResponse;
 import com.example.springreddit.dto.LoginRequest;
+import com.example.springreddit.dto.RefreshTokenRequest;
 import com.example.springreddit.model.NotificationEmail;
 import com.example.springreddit.dto.RegisterRequest;
 import com.example.springreddit.model.User;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.Session;
+import javax.validation.Valid;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +37,7 @@ import static java.time.Instant.now;
 
 /*
  This class is responsible for creating the User object and storing it in the database.
+ A Service notation means that this class will be registered as a bean in the context.
  */
 @Service
 @AllArgsConstructor
@@ -56,6 +59,7 @@ public class AuthService {
 	private final VerificationTokenRepository verificationTokenRepository;
 	private final MailContentBuilder mailContentBuilder;
 	private final MailService mailService;
+	private final RefreshTokenService refreshTokenService;
 
 
 	/*
@@ -118,15 +122,33 @@ public class AuthService {
 		Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
 				loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authenticate);
-		String authenticationToken = jwtProvider.generateToken(authenticate);
-		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+		String token = jwtProvider.generateToken(authenticate);
+		return AuthenticationResponse.builder()
+				.authenticationToken(token)
+				.refreshToken(refreshTokenService.generateRefreshToken().getToken())
+				.expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+				.username(loginRequest.getUsername())
+				.build();
 	}
 
 	@Transactional(readOnly = true)
 	User getCurrentUser() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
-				getContext().getAuthentication().getPrincipal();
+				getContext()
+				.getAuthentication()
+				.getPrincipal();
 		return userRepository.findByUsername(principal.getUsername())
 				.orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
+	}
+
+	public AuthenticationResponse refreshToken(@Valid RefreshTokenRequest refreshTokenRequest) {
+		refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+		String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+		return AuthenticationResponse.builder()
+				.authenticationToken(token)
+				.refreshToken(refreshTokenRequest.getRefreshToken())
+				.expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+				.username(refreshTokenRequest.getUsername())
+				.build();
 	}
 }

@@ -2,11 +2,15 @@ package com.example.springreddit.controller;
 
 import com.example.springreddit.dto.AuthenticationResponse;
 import com.example.springreddit.dto.LoginRequest;
+import com.example.springreddit.dto.RefreshTokenRequest;
 import com.example.springreddit.dto.RegisterRequest;
 import com.example.springreddit.service.AuthService;
+import com.example.springreddit.service.RefreshTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -20,6 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthController {
 
 	private final AuthService authService;
+	private final RefreshTokenService refreshTokenService;
 
 	//TODO: the sign up should allow only unqiue registrations, get requests can only return a single value.
 	@PostMapping("/signup")
@@ -38,5 +43,16 @@ public class AuthController {
 	public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
 		return authService.login(loginRequest); // The login endpoint passes the LoginRequest object to the login()
 												// method of the AuthService class after the POST call has been made.
+	}
+
+	@PostMapping("refresh/token")
+	public AuthenticationResponse refreshTokens(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+		return authService.refreshToken(refreshTokenRequest);
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+		refreshTokenService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
+		return ResponseEntity.status(OK).body("Refresh Token Deleted Successfully!!");
 	}
 }
