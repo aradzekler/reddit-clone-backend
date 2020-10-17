@@ -4,6 +4,7 @@ import com.example.springreddit.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -40,11 +41,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable()
 				.authorizeRequests()
-				.antMatchers("/api/auth/**") // allow all the requests which match the endpoint “/api/auth/**”
+				.antMatchers("/api/auth/**")
+				.permitAll()
+				.antMatchers(HttpMethod.GET, "/api/subreddit")
+				.permitAll()
+				.antMatchers("/v2/api-docs", // allows us to acces the Swagger API without a token.
+						"/configuration/ui",
+						"/swagger-resources/**",
+						"/configuration/security",
+						"/swagger-ui.html",
+						"/webjars/**")
 				.permitAll()
 				.anyRequest()
 				.authenticated();
-		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		httpSecurity.addFilterBefore(jwtAuthenticationFilter,
+				UsernamePasswordAuthenticationFilter.class);
 	}
 
 	// configured AuthenticationManagerBuilder to use the UserDetailsService interface to check for user information.
