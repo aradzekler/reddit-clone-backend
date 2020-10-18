@@ -1,0 +1,15 @@
+package com.example.redditclonebackend.repository;
+
+import com.example.redditclonebackend.model.VerificationToken;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+/*
+	Same principle as UserRepository
+ */
+@Repository
+public interface VerificationTokenRepository extends JpaRepository<VerificationToken, Long> {
+	Optional<VerificationToken> findByToken(String token);
+}
