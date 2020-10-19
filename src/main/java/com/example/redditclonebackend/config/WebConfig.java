@@ -3,6 +3,7 @@ package com.example.redditclonebackend.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -29,5 +30,17 @@ public class WebConfig implements WebMvcConfigurer {
 				.allowedHeaders("*")
 				.exposedHeaders("Authorization")
 				.allowCredentials(true);
+	}
+
+	/*
+		After we added the CORS policy, SPRING doesnt know how to handle
+		our Swagger requests anymore, we have to exclude him.
+	 */
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("swagger-ui.html")
+				.addResourceLocations("classpath:/META-INF/resources/");
+		registry.addResourceHandler("/webjars/**")
+				.addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
 }

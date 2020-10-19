@@ -37,15 +37,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	@Override // these are our main settings for our SecurityConfig class
+	@Override
 	public void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable()
+		httpSecurity.cors().and()
+				.csrf().disable()
 				.authorizeRequests()
 				.antMatchers("/api/auth/**")
 				.permitAll()
 				.antMatchers(HttpMethod.GET, "/api/subreddit")
 				.permitAll()
-				.antMatchers("/v2/api-docs", // allows us to acces the Swagger API without a token.
+				.antMatchers(HttpMethod.GET, "/api/posts/")
+				.permitAll()
+				.antMatchers(HttpMethod.GET, "/api/posts/**")
+				.permitAll()
+				.antMatchers("/v2/api-docs",
 						"/configuration/ui",
 						"/swagger-resources/**",
 						"/configuration/security",
