@@ -136,6 +136,13 @@
 			<version>2.9.2</version>
 		</dependency>
 
+		<!-- PostgreSQL for our production site-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.16</version>
+		</dependency>
+
 	</dependencies>
 
 

@@ -1,6 +1,7 @@
 package com.example.redditclonebackend.service;
 
 
+import com.example.redditclonebackend.config.AppConfig;
 import com.example.redditclonebackend.dto.AuthenticationResponse;
 import com.example.redditclonebackend.dto.LoginRequest;
 import com.example.redditclonebackend.dto.RefreshTokenRequest;
@@ -29,7 +30,6 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.redditclonebackend.util.Constants.ACTIVATION_EMAIL;
 import static java.time.Instant.now;
 
 /*
@@ -57,6 +57,7 @@ public class AuthService {
 	private final MailContentBuilder mailContentBuilder;
 	private final MailService mailService;
 	private final RefreshTokenService refreshTokenService;
+	private final AppConfig appConfig;
 
 
 	/*
@@ -77,9 +78,10 @@ public class AuthService {
 		userRepository.save(user);
 		log.info("User Registered Successfully, Sending Authentication Email");
 		String token = generateVerificationToken(user);
-		String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
-				+ ACTIVATION_EMAIL + "/" + token);
-		mailService.sendMail(new NotificationEmail("Please Activate your account", user.getEmail(), message));
+		mailService.sendMail(new NotificationEmail("Please Activate your Account",
+				user.getEmail(), "Thank you for signing up to Spring Reddit, " +
+				"please click on the below url to activate your account : " +
+				appConfig.getAppUrl() + "/api/auth/accountVerification/" + token));
 	}
 
 	private String generateVerificationToken(User user) {

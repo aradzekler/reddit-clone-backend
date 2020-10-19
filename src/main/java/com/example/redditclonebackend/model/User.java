@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -23,20 +24,18 @@ import static javax.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "reddit_users")
 public class User {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-		private Long userId;
-
+	private Long userId;
 	@NotBlank(message = "Username is required")
 	private String username;
-
 	@NotBlank(message = "Password is required")
 	private String password;
-
 	@Email
 	@NotEmpty(message = "Email is required")
 	private String email;
-	private Instant created; // represents a specific moment on the time line
+	private Instant created;
 	private boolean enabled;
 }
