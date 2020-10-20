@@ -5,6 +5,8 @@ The frontend was built using Angular and Bootstrap, the code is here: https://gi
 
 # Pictures
 
+![picture1](/presentation/Untitled111.png)
+
 ![picture1](/presentation/Untitled1.png)
 
 ![picture1](/presentation/Untitled2.png)
